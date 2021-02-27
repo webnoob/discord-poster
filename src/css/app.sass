@@ -1,0 +1,88 @@
+// app global css in Sass form
+
+body
+  .body--light
+    background: transparent
+
+.bg-discord
+  background: #7289da
+
+.text-discord
+  color: white
+
+.override-input
+  .q-field
+    padding-top: unset
+
+    &__label
+      color: white
+
+    &__control
+      border-radius: 5px
+      background: #40444b !important
+      color: white !important
+
+      &:before
+        background: #40444b !important
+
+      &:after
+        height: 0px
+
+      textarea,
+      input
+        color: white
+
+.discord-frame
+  padding-top: 45px
+  .discord-message-container
+    border-radius: 5px
+    border-bottom-left-radius: unset
+    border-bottom-right-radius: unset
+    background-color: #36393f
+
+    .uploader
+      background: #40444b
+
+      .q-uploader
+        background: #40444b
+        box-shadow: unset
+        width: 100%
+        height: 100%
+
+        &__header,
+        &__list
+          background: #40444b
+
+        &__subtitle
+          display: none
+
+      &--has-image
+        .q-uploader
+          &__header
+            display: none
+          &__list
+            height: 150px !important
+            overflow: hidden
+
+            .q-uploader__file
+              height: 100%
+
+    .image-info
+      font-weight: bold
+      font-size: 18px
+
+    .uploader
+      width: 280px
+      height: 150px
+      position: absolute
+      top: -45px
+      left: 20px
+      border-radius: 10px
+
+  .button-container
+    background: #2f3136
+    border-bottom-left-radius: 5px
+    border-bottom-right-radius: 5px
+
+    .q-btn
+      font-size: 12px
