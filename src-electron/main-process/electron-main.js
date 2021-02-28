@@ -1,4 +1,5 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import { app, BrowserWindow, nativeTheme, ipcMain } from 'electron'
+import { default as sendDCMessage } from '../../../discord-massenger/dist'
 
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
@@ -46,6 +47,14 @@ function createWindow () {
     mainWindow = null
   })
 }
+
+ipcMain.on('send-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  sendDCMessage(arg.token, arg.message, arg.channels).then(res => {
+    console.log('DONE', res)
+    event.sender.send('send-message-response', res)
+  })
+})
 
 app.on('ready', createWindow)
 

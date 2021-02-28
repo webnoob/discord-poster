@@ -46,7 +46,7 @@ import { v4 as uuidv4 } from 'uuid'
 export default class SettingsDialogue extends Vue {
   token = ''
 
-  categories: DiscordCategory[] = []
+  categories: DiscordCategory[] | undefined = []
   selectedNode = ''
 
   get dialog (): QDialog {
@@ -61,11 +61,13 @@ export default class SettingsDialogue extends Vue {
     return this.findDiscord(this.selectedNode)
   }
 
-  findCategory (id: string): DiscordCategory {
-    return this.categories.find(f => f.id === id)
+  findCategory (id: string): DiscordCategory | undefined {
+    return this.categories?.find(f => f.id === id)
   }
 
-  findDiscord (id: string): DiscordChannel {
+  findDiscord (id: string): DiscordChannel | undefined {
+    if (!this.categories) return void 0
+
     for (const category of this.categories) {
       const discord = category.children.find(f => f.id === id)
       if (discord) {
@@ -88,14 +90,15 @@ export default class SettingsDialogue extends Vue {
       cancel: true,
       persistent: true
     }).onOk((data: string) => {
-      if (this.selectedCategory.children.find(f => f.channelId === data)) {
+      if (this.selectedCategory?.children.find(f => f.channelId === data)) {
         return this.showError('Channel already in this group.')
       }
 
-      this.selectedCategory.children.push({
+      this.selectedCategory?.children.push({
         id: uuidv4(),
         channelId: data,
-        label: data
+        label: data,
+        serverId: ''
       })
       this.$set(this, 'categories', this.categories)
     })
@@ -115,7 +118,7 @@ export default class SettingsDialogue extends Vue {
         return this.showError('Category name already in use.')
       }
 
-      this.categories.push({
+      this.categories?.push({
         id: uuidv4(),
         label: data,
         children: []
@@ -128,16 +131,18 @@ export default class SettingsDialogue extends Vue {
     if (!this.selectedNode) {
       return this.showError('Nothing selected.')
     } else if (this.selectedCategory) {
-      this.categories.splice(this.categories.indexOf(this.selectedCategory), 1)
+      this.categories?.splice(this.categories.indexOf(this.selectedCategory), 1)
       this.$set(this, 'categories', this.categories)
     } else if (this.selectedDiscord) {
-      for (const category of this.categories) {
-        const index = category.children.indexOf(this.selectedDiscord)
-        if (index > -1) {
-          category.children.splice(index, 1)
+      if (this.categories) {
+        for (const category of this.categories) {
+          const index = category.children.indexOf(this.selectedDiscord)
+          if (index > -1) {
+            category.children.splice(index, 1)
+          }
         }
+        this.$set(this, 'categories', this.categories)
       }
-      this.$set(this, 'categories', this.categories)
     }
   }
 
@@ -163,17 +168,19 @@ export default class SettingsDialogue extends Vue {
 
   save () {
     this.$q.localStorage.set('token', this.token)
-    this.$q.localStorage.set('categories', this.categories)
+    if (this.categories) {
+      this.$q.localStorage.set('categories', this.categories)
+    }
     this.confirm()
   }
 
   load () {
     if (this.$q.localStorage.has('token')) {
-      this.token = this.$q.localStorage.getItem('token')
+      this.token = this.$q.localStorage.getItem('token') || ''
     }
 
     if (this.$q.localStorage.has('categories')) {
-      this.categories = this.$q.localStorage.getItem('categories')
+      this.categories = this.$q.localStorage.getItem('categories') as DiscordCategory[]
     }
   }
 
@@ -201,17 +208,13 @@ export default class SettingsDialogue extends Vue {
     this.hide()
   }
 
-  async confirm () {
+  confirm () {
     this.$emit('ok')
     this.hide()
   }
 
-  public mounted () {
+  mounted () {
     this.load()
   }
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -5,7 +5,8 @@
  *  environment.
  */
 
-/*import electronDebug from 'electron-debug'
+/*
+import electronDebug from 'electron-debug'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import { app, BrowserWindow } from 'electron'
 
@@ -36,6 +37,7 @@ app.whenReady().then(() => {
         console.log('An error occurred: ', err)
       })
   }, 250)
-})*/
+})
+*/
 
 import './electron-main'
